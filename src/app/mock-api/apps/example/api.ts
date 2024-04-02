@@ -1,12 +1,9 @@
 import { Injectable } from '@angular/core';
-import { BobyMockApiService } from '@boby/lib/mock-api';
-import { finance as financeData } from 'app/mock-api/dashboards/finance/data';
-import { cloneDeep } from 'lodash-es';
+import { BobyMockApiService } from '../../../../@boby/lib/mock-api';
 
 @Injectable({providedIn: 'root'})
-export class FinanceMockApi
+export class ExampleMockApi
 {
-    private _finance: any = financeData;
 
     /**
      * Constructor
@@ -26,11 +23,21 @@ export class FinanceMockApi
      */
     registerHandlers(): void
     {
+
         // -----------------------------------------------------------------------------------------------------
-        // @ Sales - GET
+        // @ Categories - GET
         // -----------------------------------------------------------------------------------------------------
         this._bobyMockApiService
-            .onGet('api/dashboards/finance')
-            .reply(() => [200, cloneDeep(this._finance)]);
+            .onGet('api/apps/example/items')
+            .reply(() =>
+            {
+                // List the items
+                const items = [];
+
+
+
+                return [200, items];
+            });
+
     }
 }
