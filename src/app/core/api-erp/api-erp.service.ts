@@ -32,11 +32,17 @@ export class ApiErpService {
             .catch(
                 (error)=>{
                     console.warn('ERROR POST',error);
+                    const auth = JSON.parse(localStorage.getItem('aut'));
+
                     // Redirect
-                    this._authService.redirect();
+                    if ( !auth ) {
+                        this._authService.redirect();
+                    }
 
                     // Reload the app
-                    location.reload();
+                    if ( !auth ) {
+                        location.reload();
+                    }
                 }
             );
     }
