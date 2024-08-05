@@ -110,33 +110,22 @@ export class AuthService
 
         return from(PxpClient.login(credentials.email, credentials.password)).pipe(
             switchMap((response: any) =>
-            { console.warn('signIn', response);
+            {
                 if ( response.data.success ) {
                     this._authenticated = true;
 
-                    let user = {
-                        avatar: `../uploaded_files/sis_parametros/Archivo/${response.logo}`,
-                        email: response.user,
-                        id: response.id_usuario,
-                        name: response.nombre_usuario,
-                        status: "online"
-                    };
-
                     let protocol = location.protocol.replace(':', '');
-                    // Store the user on the user service
-                    this._userService.user = {
-                        avatar: `${protocol}://erp.boa.bo/uploaded_files/sis_parametros/Archivo/${response.logo}`,
+                    let user = {
+                        id: response.data.id_usuario,
+                        name: response.data.nombre_usuario,
                         email: response.user,
-                        id: response.id_usuario,
-                        name: response.nombre_usuario,
+                        avatar: `${protocol}://erp.boa.bo/uploaded_files/sis_parametros/Archivo/${response.data.logo}`,
                         status: "online"
                     };
+                    this._userService.user = user;
 
                     // Return a new observable with the response
-                    return of({
-                        user: user,
-                        navigation: response.navigation
-                    });
+                    return of(user);
                 }
             }),
         );
@@ -222,25 +211,16 @@ export class AuthService
     check(): Observable<boolean>
     {
         // Check if the user is logged in
-        if ( this._authenticated )
-        {
+        let auth:any = localStorage.getItem('aut');
+        if ( auth !== null)
+            auth = JSON.parse(auth);
+
+        // Check if the user is logged in
+        if (auth) {
             return of(true);
         }
 
-        // Check the access token availability
-        /*if ( !this.accessToken )
-        {
-            return of(false);
-        }*/
-
-        // Check the access token expire date
-        /*if ( AuthUtils.isTokenExpired(this.accessToken) )
-        {
-            return of(false);
-        }*/
-
-        // If the access token exists, and it didn't expire, sign in using it
-        return of(this._authenticated);//return this.signInUsingToken();
+        return of(false);
     }
 
     /**
